@@ -16,13 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/import-ai/minio-server
-          tags: type=ref,event=tag
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -42,11 +35,10 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ghcr.io/import-ai/minio-server:${{ github.ref_name }}
           platforms: |
             linux/amd64
             linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: BASE_IMAGE=minio/minio:${{ steps.meta.outputs.tags }}
+          build-args: BASE_IMAGE=minio/minio:${{ github.ref_name }}
